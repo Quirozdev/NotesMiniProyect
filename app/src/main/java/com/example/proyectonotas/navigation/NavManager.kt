@@ -5,8 +5,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.example.proyectonotas.viewmodels.NoteViewModel
 import com.example.proyectonotas.views.AddNoteFormView
+import com.example.proyectonotas.views.EditNoteFormView
 import com.example.proyectonotas.views.HomeView
 import com.example.proyectonotas.views.NotesListView
 
@@ -26,6 +28,10 @@ fun NavManager(viewModel: NoteViewModel, modifier: Modifier) {
         }
         composable<AddNoteForm> {
             AddNoteFormView(viewModel, navController, modifier)
+        }
+        composable<EditNoteForm> { navBackStackEntry ->
+            val args = navBackStackEntry.toRoute<EditNoteForm>()
+            EditNoteFormView(args.noteId, navController, viewModel)
         }
     }
 }
