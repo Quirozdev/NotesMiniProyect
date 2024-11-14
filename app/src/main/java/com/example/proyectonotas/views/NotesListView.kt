@@ -56,6 +56,7 @@ import com.example.proyectonotas.model.Note
 import com.example.proyectonotas.navigation.AddNoteForm
 import com.example.proyectonotas.navigation.EditNoteForm
 import com.example.proyectonotas.navigation.Home
+import com.example.proyectonotas.navigation.IndividualNote
 import com.example.proyectonotas.navigation.NotesList
 import com.example.proyectonotas.viewmodels.NoteViewModel
 
@@ -126,9 +127,11 @@ fun NotesListView(viewModel: NoteViewModel, navController: NavController, modifi
                     items(estado.notes) {
 
                         val backgroundColor = if (it.backgroundColor.isNotBlank()) Color(it.backgroundColor.toColorInt())  else MaterialTheme.colorScheme.surfaceVariant
-                        val textColor = if (it.textColor.isNotBlank()) Color(it.textColor.toColorInt()) else MaterialTheme.colorScheme.onSurfaceVariant
 
                         ElevatedCard(
+                            onClick = {
+                                navController.navigate(IndividualNote(noteId = it.id))
+                            },
                             colors = CardDefaults.cardColors(
                                 containerColor = backgroundColor),
                             elevation = CardDefaults.cardElevation(
@@ -143,72 +146,33 @@ fun NotesListView(viewModel: NoteViewModel, navController: NavController, modifi
                                     text = it.title,
                                     style = MaterialTheme.typography.headlineSmall,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = textColor
                                 )
-                                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                                    SmallFloatingActionButton(
-                                        onClick = {
-                                            navController.navigate(EditNoteForm(noteId = it.id))
-                                        },
-                                        containerColor = MaterialTheme.colorScheme.surface,
-                                        contentColor = MaterialTheme.colorScheme.onSurface,
-                                    ) {
-                                        Icon(Icons.Filled.Edit, "Editar nota")
-                                    }
-                                    SmallFloatingActionButton(
-                                        onClick = {
-                                            showDeleteDialog = true
-                                            noteToDelete = it
-                                        },
-                                        containerColor = MaterialTheme.colorScheme.errorContainer,
-                                        contentColor = MaterialTheme.colorScheme.onErrorContainer,
-                                    ) {
-                                        Icon(Icons.Filled.Delete, "Eliminar nota")
-                                    }
-                                }
+//                                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+//                                    SmallFloatingActionButton(
+//                                        onClick = {
+//                                            navController.navigate(EditNoteForm(noteId = it.id))
+//                                        },
+//                                        containerColor = MaterialTheme.colorScheme.surface,
+//                                        contentColor = MaterialTheme.colorScheme.onSurface,
+//                                    ) {
+//                                        Icon(Icons.Filled.Edit, "Editar nota")
+//                                    }
+//                                    SmallFloatingActionButton(
+//                                        onClick = {
+//                                            showDeleteDialog = true
+//                                            noteToDelete = it
+//                                        },
+//                                        containerColor = MaterialTheme.colorScheme.errorContainer,
+//                                        contentColor = MaterialTheme.colorScheme.onErrorContainer,
+//                                    ) {
+//                                        Icon(Icons.Filled.Delete, "Eliminar nota")
+//                                    }
+//                                }
                             }
-                            HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            Text(
-                                text = it.content,
-                                color = textColor,
-                                modifier = Modifier.padding(24.dp)
-                            )
                         }
                     }
                 }
             }
-            if (showDeleteDialog) {
-                OpenDeleteDialog(
-                    onDismissRequest = {
-                        showDeleteDialog = false
-                        noteToDelete = Note()
-                    },
-                    onConfirmation = {
-                        try {
-                            viewModel.deleteNote(noteToDelete)
-                            Toast.makeText(context, "Nota eliminada exitosamente", Toast.LENGTH_SHORT).show()
-                        } catch (e: Exception) {
-                            println(e)
-                        } finally {
-                            showDeleteDialog = false
-                        }
-                    }
-                )
-            }
         }
     }
-}
-
-
-@Composable
-fun OpenDeleteDialog(
-    onDismissRequest: () -> Unit,
-    onConfirmation: () -> Unit
-) {
-    SimpleDialog(
-        onDismissRequest = { onDismissRequest() },
-        onConfirmation = { onConfirmation() },
-        dialogTitle = "¿Borrar nota?",
-        dialogText = "Esta acción es irreversible"
-    )
 }

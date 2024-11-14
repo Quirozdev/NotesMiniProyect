@@ -65,10 +65,12 @@ import androidx.core.graphics.toColorInt
 import androidx.navigation.NavController
 import com.example.compose.backgroundDark
 import com.example.proyectonotas.R
+import com.example.proyectonotas.dialogs.CancelDialog
 import com.example.proyectonotas.forms.NoteForm
 import com.example.proyectonotas.model.Note
 import com.example.proyectonotas.navigation.AddNoteForm
 import com.example.proyectonotas.navigation.Home
+import com.example.proyectonotas.navigation.IndividualNote
 import com.example.proyectonotas.navigation.NotesList
 import com.example.proyectonotas.viewmodels.NoteViewModel
 
@@ -104,8 +106,8 @@ fun AddNoteFormView(viewModel: NoteViewModel, navController: NavController, modi
         var title by remember { mutableStateOf("") }
         var content by remember { mutableStateOf("") }
         var backgroundColor by remember { mutableStateOf("") }
-        var textColor by remember { mutableStateOf("") }
 
+        var showCancelDialog by remember { mutableStateOf(false) }
 
         NoteForm(
             title = title,
@@ -114,16 +116,31 @@ fun AddNoteFormView(viewModel: NoteViewModel, navController: NavController, modi
             onContentChange = { newContent -> content = newContent },
             backgroundColor = backgroundColor,
             onBackgroundColorChange = { newBackgroundColor -> backgroundColor = newBackgroundColor },
-            textColor = textColor,
-            onTextColorChange = { newTextColor -> textColor = newTextColor },
-            submitButtonText = "Agregar Nota",
-            submitButtonIconId = R.drawable.icono_agregar,
-            onSubmit = {
-                viewModel.addNote(Note(title = title, content = content, backgroundColor = backgroundColor, textColor = textColor))
+            primaryButtonText = "Crear nota",
+            primaryButtonIconId = R.drawable.icono_agregar,
+            primaryButtonAction = {
+                viewModel.addNote(Note(title = title, content = content, backgroundColor = backgroundColor))
                 navController.navigate(NotesList)
                 Toast.makeText(context, "Nota creada exitosamente", Toast.LENGTH_SHORT).show()
             },
+            secondaryButtonText = "Cancelar",
+            secondaryButtonIconId = R.drawable.icono_cancelar,
+            secondaryButtonColor = MaterialTheme.colorScheme.secondary,
+            secondaryButtonAction = {
+                showCancelDialog = true
+            },
             modifier = Modifier.padding(innerPadding))
+
+        if (showCancelDialog) {
+            CancelDialog(
+                onDismissRequest = {
+                    showCancelDialog = false
+                },
+                onConfirmation = {
+                    navController.navigate(NotesList)
+                }
+            )
+        }
     }
 }
 

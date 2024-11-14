@@ -1,16 +1,15 @@
 package com.example.proyectonotas.views
 
 import android.widget.Toast
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -22,25 +21,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.proyectonotas.R
-import com.example.proyectonotas.dialogs.CancelDialog
 import com.example.proyectonotas.dialogs.OpenDeleteDialog
 import com.example.proyectonotas.forms.NoteForm
 import com.example.proyectonotas.model.Note
-import com.example.proyectonotas.navigation.IndividualNote
+import com.example.proyectonotas.navigation.AddNoteForm
+import com.example.proyectonotas.navigation.EditNoteForm
+import com.example.proyectonotas.navigation.Home
 import com.example.proyectonotas.navigation.NotesList
 import com.example.proyectonotas.viewmodels.NoteViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditNoteFormView(noteId: Int, navController: NavController, viewModel: NoteViewModel, modifier: Modifier = Modifier) {
+fun NoteView(noteId: Int, navController: NavController, viewModel: NoteViewModel, modifier: Modifier = Modifier) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -49,11 +46,11 @@ fun EditNoteFormView(noteId: Int, navController: NavController, viewModel: NoteV
                     titleContentColor = MaterialTheme.colorScheme.onSecondaryContainer
                 ),
                 title = {
-                    Text(text = "Editar Nota", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.headlineMedium)
+                    Text(text = "Información de la nota", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.headlineMedium)
                 },
                 navigationIcon = {
                     IconButton (onClick = {
-                        navController.navigate(IndividualNote(noteId = noteId))
+                        navController.navigate(NotesList)
                     }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -65,45 +62,48 @@ fun EditNoteFormView(noteId: Int, navController: NavController, viewModel: NoteV
         }
     ) { innerPadding ->
 
-        val noteToEdit = viewModel.getNoteById(noteId) ?: Note()
-        // para el toast
-        var context = LocalContext.current
-        var title by remember { mutableStateOf(noteToEdit.title) }
-        var content by remember { mutableStateOf(noteToEdit.content) }
-        var backgroundColor by remember { mutableStateOf(noteToEdit.backgroundColor) }
+        val currentNote = viewModel.getNoteById(noteId) ?: Note()
 
-        var showCancelDialog by remember { mutableStateOf(false) }
+        var context = LocalContext.current
+        var showDeleteDialog by remember { mutableStateOf(false) }
 
         NoteForm(
-            title = title,
-            onTitleChange = { newTitle -> title = newTitle },
-            content = content,
-            onContentChange = { newContent -> content = newContent },
-            backgroundColor = backgroundColor,
-            onBackgroundColorChange = { newBackgroundColor -> backgroundColor = newBackgroundColor },
-            primaryButtonText = "Actualizar",
+            title = currentNote.title,
+            onTitleChange = {  },
+            content = currentNote.content,
+            onContentChange = {  },
+            backgroundColor = currentNote.backgroundColor,
+            onBackgroundColorChange = { },
+            primaryButtonText = "Editar",
             primaryButtonIconId = R.drawable.icono_editar,
             primaryButtonColor = MaterialTheme.colorScheme.tertiary,
             primaryButtonAction = {
-                viewModel.updateNote(Note(id = noteId, title = title, content = content, backgroundColor = backgroundColor))
-                navController.navigate(NotesList)
-                Toast.makeText(context, "Nota actualizada exitosamente", Toast.LENGTH_SHORT).show()
+                navController.navigate(EditNoteForm(noteId = currentNote.id))
             },
-            secondaryButtonText = "Cancelar",
-            secondaryButtonIconId = R.drawable.icono_cancelar,
-            secondaryButtonColor = MaterialTheme.colorScheme.secondary,
+            secondaryButtonText = "Borrar",
+            secondaryButtonIconId = R.drawable.icono_borrar,
+            secondaryButtonColor = MaterialTheme.colorScheme.error,
             secondaryButtonAction = {
-                showCancelDialog = true
+                showDeleteDialog = true
             },
+            disableAllFields = true,
             modifier = Modifier.padding(innerPadding))
 
-        if (showCancelDialog) {
-            CancelDialog(
+        if (showDeleteDialog) {
+            OpenDeleteDialog(
                 onDismissRequest = {
-                    showCancelDialog = false
+                    showDeleteDialog = false
                 },
                 onConfirmation = {
-                    navController.navigate(IndividualNote(noteId = noteId))
+                    try {
+                        viewModel.deleteNote(currentNote)
+                    } catch (e: Exception) {
+                        println(e)
+                    } finally {
+                        showDeleteDialog = false
+                        Toast.makeText(context, "Nota eliminada exitosamente", Toast.LENGTH_SHORT).show()
+                        navController.navigate(NotesList)
+                    }
                 }
             )
         }

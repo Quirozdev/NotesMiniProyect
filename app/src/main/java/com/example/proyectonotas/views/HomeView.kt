@@ -32,7 +32,7 @@ import com.example.proyectonotas.navigation.NotesList
 fun HomeView(navController: NavController, modifier: Modifier = Modifier) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceAround, modifier = modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.background)) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(painter = painterResource(id = R.drawable.logo), contentDescription = "Logo", modifier = Modifier.size(100.dp))
+            Image(painter = painterResource(id = R.drawable.logo_unison), contentDescription = "Logo", modifier = Modifier.size(200.dp))
             Text(text = "Apunta!", color = MaterialTheme.colorScheme.onBackground, style = MaterialTheme.typography.displaySmall)
         }
         ExtendedFloatingActionButton(

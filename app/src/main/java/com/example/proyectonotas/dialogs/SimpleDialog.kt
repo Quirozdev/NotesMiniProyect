@@ -24,7 +24,9 @@ fun SimpleDialog(
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
     dialogTitle: String,
-    dialogText: String
+    dialogText: String,
+    confirmationText: String,
+    dismissText: String
 ) {
     Dialog(onDismissRequest = { onDismissRequest() }) {
         // Container
@@ -66,7 +68,7 @@ fun SimpleDialog(
                         modifier = Modifier.padding(horizontal = 10.dp)
                     ) {
                         Text(
-                            text = "Cancelar",
+                            text = dismissText,
                             color = MaterialTheme.colorScheme.secondary
                         )
                     }
@@ -77,7 +79,7 @@ fun SimpleDialog(
                         modifier = Modifier.padding(horizontal = 10.dp)
                     ) {
                         Text(
-                            text = "Confirmar"
+                            text = confirmationText
                         )
                     }
                 }

@@ -7,6 +7,8 @@ object Home
 
 @Serializable
 object NotesList
+@Serializable
+data class IndividualNote(val noteId: Int)
 
 @Serializable
 object AddNoteForm

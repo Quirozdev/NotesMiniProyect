@@ -10,6 +10,7 @@ import com.example.proyectonotas.viewmodels.NoteViewModel
 import com.example.proyectonotas.views.AddNoteFormView
 import com.example.proyectonotas.views.EditNoteFormView
 import com.example.proyectonotas.views.HomeView
+import com.example.proyectonotas.views.NoteView
 import com.example.proyectonotas.views.NotesListView
 
 @Composable
@@ -25,6 +26,10 @@ fun NavManager(viewModel: NoteViewModel, modifier: Modifier) {
         }
         composable<NotesList> {
             NotesListView(viewModel, navController, modifier)
+        }
+        composable<IndividualNote> { navBackStackEntry ->
+            val args = navBackStackEntry.toRoute<IndividualNote>()
+            NoteView(args.noteId, navController, viewModel)
         }
         composable<AddNoteForm> {
             AddNoteFormView(viewModel, navController, modifier)

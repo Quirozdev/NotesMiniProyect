@@ -20,9 +20,6 @@ data class Note(
     @ColumnInfo(name = "backgroundColor")
     val backgroundColor: String = "",
 
-    @ColumnInfo(name = "textColor")
-    val textColor: String = "",
-
     @ColumnInfo(name = "backgroundImage")
     val backgroundImage: String = ""
 )
