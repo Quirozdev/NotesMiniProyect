@@ -1,5 +1,7 @@
 package com.example.proyectonotas.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -24,10 +26,36 @@ fun NavManager(viewModel: NoteViewModel, modifier: Modifier) {
         composable<Home> {
             HomeView(navController, modifier)
         }
-        composable<NotesList> {
+        composable<NotesList>(
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left,
+                    tween(500)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    tween(500)
+                )
+            }
+        ) {
             NotesListView(viewModel, navController, modifier)
         }
-        composable<IndividualNote> { navBackStackEntry ->
+        composable<IndividualNote>(
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Up,
+                    tween(500)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Down,
+                    tween(500)
+                )
+            }
+        ) { navBackStackEntry ->
             val args = navBackStackEntry.toRoute<IndividualNote>()
             NoteView(args.noteId, navController, viewModel)
         }

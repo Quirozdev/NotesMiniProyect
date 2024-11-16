@@ -94,8 +94,7 @@ fun NoteForm(
                 ColorSelector(label = "Color de fondo",
                     selectableColors = listOf(
                         "#4c662b", "#586249", "#386663", "#ba1a1a",
-                        "#cdeda3", "#dce7c8", "#bcece7", "#ffdad6",
-                        "#dadbd0", "#f9faef", "#f9faef", "#2f312a",
+                        "#ffdad6", "#dadbd0", "#f9faef", "#2f312a",
                     ),
                     selectedColor = backgroundColor,
                     onValueChange = { onBackgroundColorChange(it) },
@@ -188,13 +187,12 @@ fun Field(label: String, value: String, onValueChange: (String) -> Unit, errorMe
 
 @Composable
 fun ColorSelector(label: String, selectableColors: List<String>, selectedColor: String, onValueChange: (String) -> Unit, disabled: Boolean = false){
-    // Declaring a boolean value to store
-    // the expanded state of the Text Field
+    // estado que va a determinar si el select esta expandido o no
     var isExpanded by remember { mutableStateOf(false) }
-
+    // esto es para que el boton y el contenido del dropdown tengan el mismo tamanio
     var size by remember { mutableStateOf(Size.Zero) }
 
-    // Up Icon when expanded and down icon when collapsed
+    // mostrar uno u otro icono dependiendo de si el select esta expandido o no
     val icon = if (isExpanded)
         Icons.Filled.KeyboardArrowUp
     else
@@ -203,7 +201,9 @@ fun ColorSelector(label: String, selectableColors: List<String>, selectedColor: 
     Column() {
         OutlinedButton(
             onClick = {
+                // si esta deshabilitado, no ejecutar la accion
                 if (!disabled) {
+                    // cambiar el estado de expansion
                     isExpanded = !isExpanded
                 }
             },
@@ -215,6 +215,7 @@ fun ColorSelector(label: String, selectableColors: List<String>, selectedColor: 
                     size = coordinates.size.toSize()
                 },
         ) {
+            // para poner en el contenido del select el color seleccionado (cuando se ha seleccionado)
             if (selectedColor.isNotBlank()) {
                 Text("$label: $selectedColor", fontSize = MaterialTheme.typography.labelLarge.fontSize, textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
             } else {
@@ -228,10 +229,6 @@ fun ColorSelector(label: String, selectableColors: List<String>, selectedColor: 
                 )
             }
         }
-
-
-        // Create a drop-down menu with list of cities,
-        // when clicked, set the Text Field text as the city selected
         DropdownMenu(
             expanded = isExpanded,
             onDismissRequest = { isExpanded = false },
@@ -239,8 +236,11 @@ fun ColorSelector(label: String, selectableColors: List<String>, selectedColor: 
                 // esto es para que el dropdown tenga el mismo ancho que el boton que lo activa
                 .width(with(LocalDensity.current){size.width.toDp()})
         ) {
+            // por todos los colores generar un item para el select/boton
             selectableColors.forEach { color ->
                 DropdownMenuItem(
+                    // cuando uno de estos items es clickado, setear el color
+                    // elegido como el seleccionado
                     onClick = {
                         if (!disabled) {
                             onValueChange(color)

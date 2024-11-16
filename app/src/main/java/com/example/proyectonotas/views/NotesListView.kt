@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -48,6 +49,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.core.graphics.toColorInt
 import androidx.navigation.NavController
 import com.example.proyectonotas.R
@@ -114,20 +116,25 @@ fun NotesListView(viewModel: NoteViewModel, navController: NavController, modifi
                 }
                 // si no se han agregado notas
             } else if (estado.notes.isEmpty()) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center, modifier = Modifier.fillMaxSize().padding(24.dp)) {
-
+                Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(48.dp, Alignment.CenterVertically), modifier = Modifier.fillMaxSize().padding(24.dp)) {
+                    Image(painter = painterResource(id = R.drawable.icono_lista_notas_vacia), "No hay notas")
                     Text(text = "¡No hay notas por mostrar, trata de agregar algunas!", style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center)
                 }
             } else {
-                LazyColumn(modifier = Modifier
-                    .padding(16.dp)
-                    , verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                LazyColumn(
+                    modifier = Modifier
+                    .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
 
                     // Definición de los registros.
                     items(estado.notes) {
 
                         val backgroundColor = if (it.backgroundColor.isNotBlank()) Color(it.backgroundColor.toColorInt())  else MaterialTheme.colorScheme.surfaceVariant
 
+                        Box(modifier = Modifier.offset(y = 12.dp).width(40.dp).zIndex(10f)) {
+                            Image(painter = painterResource(id = R.drawable.icono_chincheta), "Chincheta")
+                        }
                         ElevatedCard(
                             onClick = {
                                 navController.navigate(IndividualNote(noteId = it.id))
@@ -147,27 +154,6 @@ fun NotesListView(viewModel: NoteViewModel, navController: NavController, modifi
                                     style = MaterialTheme.typography.headlineSmall,
                                     fontWeight = FontWeight.SemiBold,
                                 )
-//                                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-//                                    SmallFloatingActionButton(
-//                                        onClick = {
-//                                            navController.navigate(EditNoteForm(noteId = it.id))
-//                                        },
-//                                        containerColor = MaterialTheme.colorScheme.surface,
-//                                        contentColor = MaterialTheme.colorScheme.onSurface,
-//                                    ) {
-//                                        Icon(Icons.Filled.Edit, "Editar nota")
-//                                    }
-//                                    SmallFloatingActionButton(
-//                                        onClick = {
-//                                            showDeleteDialog = true
-//                                            noteToDelete = it
-//                                        },
-//                                        containerColor = MaterialTheme.colorScheme.errorContainer,
-//                                        contentColor = MaterialTheme.colorScheme.onErrorContainer,
-//                                    ) {
-//                                        Icon(Icons.Filled.Delete, "Eliminar nota")
-//                                    }
-//                                }
                             }
                         }
                     }
